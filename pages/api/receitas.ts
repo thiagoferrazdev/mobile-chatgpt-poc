@@ -2,9 +2,9 @@ import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const response = await axios.get(`https://api.zaffari.com.br/site-shopping/receitas?idCategoria=1&pageSize=99999`,{
+    const response = await axios.get(process.env.SITE_RECEITAS,{
         headers: { 
-          'Ocp-Apim-Subscription-Key': '0bfe8e7ea79245e484e3dca6668137f9', 
+          'Ocp-Apim-Subscription-Key': process.env.SITE_RECEITAS_TOKEN, 
           }
     });
     res.status(200).json(response.data);
