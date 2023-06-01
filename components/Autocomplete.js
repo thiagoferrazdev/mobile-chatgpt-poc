@@ -2,6 +2,7 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import Autocomplete from '@mui/material/Autocomplete';
+import * as uuid from 'uuid';
 
 export default function ComboBox({recipes,setFoodInput}) {
   return (
@@ -11,6 +12,14 @@ export default function ComboBox({recipes,setFoodInput}) {
         id="free-solo-2-demo"
         disableClearable
         options={recipes?.map((option) => option)}
+        
+        renderOption={(props, option) => {
+          return (
+            <li {...props} key={uuid.v4()}>
+              {option}
+            </li>
+          );
+        }}
         sx={{
             // border: "1px solid blue",
             "& .MuiOutlinedInput-root": {

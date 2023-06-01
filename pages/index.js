@@ -128,22 +128,25 @@ export default function Home() {
     const arrVTEX = await Promise.all([productsVTEXC, productsVTEXW]).then((response) => {
       setLoader(false);
       return response}).catch((error) => { console.log(error);});
-    console.log(arrVTEX);
+
     const productsVTEX = arrVTEX[1].length > 0 ? arrVTEX[1]: arrVTEX[0];
     const productsData = productsVTEX?.map((prod)=>{
       const [item] = prod.items;
       const [imagem] = item.images
       const {sellers} =  item;
+      const {linkText} = prod;
       const [seller] = sellers;
       const {commertialOffer} = seller;
       const {Installments} = commertialOffer;
       const [first] = Installments;
 
 
+      console.log(item);
       return {
         name: prod.productName,
         imagem: imagem.imageUrl,
-        price: first.Value
+        price: first.Value,
+        link: `https://hmlzaffari.myvtex.com/${linkText}/p`
       }
     })
     setProducts(productsData);
@@ -167,8 +170,8 @@ export default function Home() {
         </div>
         {!execute && (
           <>
-            <h3 style={{fontFamily:"Montserrat",fontWeight:400}}>Qual será a receita de hoje?</h3>
-            <p style={{width:"500px",textAlign:"center",fontFamily:"Montserrat",fontSize:'16px',lineHeight:"32px"}}>Encontre a receita perfeita entre as opções do nosso catálogo e então o <span style={{color:"#027040",fontWeight:"bold"}}>Sommelier Zaffari</span> irá harmonizar vinhos com a sua escolha.</p>
+            <h3 style={{fontWeight:400}}>Qual será a receita de hoje?</h3>
+            <p style={{width:"500px",textAlign:"center",fontSize:'16px',lineHeight:"32px"}}>Encontre a receita perfeita entre as opções do nosso catálogo e então o <span style={{color:"#027040",fontWeight:"bold"}}>Sommelier Zaffari</span> irá harmonizar vinhos com a sua escolha.</p>
             <form onSubmit={onSubmit}>
               <ComboBox recipes={recipes} setFoodInput={setFoodInput} />
               <input type="submit" value="Harmonizar" />
@@ -179,12 +182,12 @@ export default function Home() {
            
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center"}}>
         {(execute) && (
-          <h2 style={{fontFamily:"Montserrat",fontWeight:600,color:"#027040",fontSize:"32px" }}>{foodInput}</h2>
+          <h2 style={{fontWeight:600,color:"#027040",fontSize:"32px" }}>{foodInput}</h2>
         )}
       
          {(execute && process) && (
           <>
-            <img src="/icons8-analyze1.png" className={styles.icon} />
+            <img src="/icons8-analyze.gif" className={styles.icon} />
             <p style={{width:"386px",color:"#9E9E9E",fontSize:"16px"}}>Nosso sommelier está encontrando as melhores harmonizações para o seu prato, aguarde.</p>
          </>
          )}
@@ -212,8 +215,8 @@ export default function Home() {
                   setShowModal(false)
                   setProducts([]);
                 }}>
-               <div style={{width:"100%",paddingBottom: "20px",display:"flex",justifyContent:"center",alignItems:"center",textAlign:"center",fontFamily:"Montserrat"}}><h3 style={{color:"#027040",fontWeight:"600",fontSize:"29px"}}>Encontrei os seguintes produtos disponíveis em nossas lojas</h3></div>
-               {loader && (<div style={{width:"100%",paddingBottom: "20px",display:"flex",justifyContent:"center",alignItems:"center",textAlign:"center",fontFamily:"Montserrat"}} className={classes.loader}>
+               <div style={{width:"100%",paddingBottom: "20px",display:"flex",justifyContent:"center",alignItems:"center",textAlign:"center"}}><h3 style={{color:"#027040",fontWeight:"600",fontSize:"29px"}}>Encontrei os seguintes produtos disponíveis em nossas lojas</h3></div>
+               {loader && (<div style={{width:"100%",paddingBottom: "20px",display:"flex",justifyContent:"center",alignItems:"center",textAlign:"center"}} className={classes.loader}>
                   <CircularProgress sx={{color:"#027040"}} />
                 </div>)}
                 <div style={{display:"flex",flexWrap:"wrap"}}>
@@ -221,10 +224,11 @@ export default function Home() {
                   <div style={{flexBasis: "50%"}}>
                    <div style={{display:"flex", margin:"5px",borderRadius:"10px",background:"#FFF",padding:"5px",border:"2px solid #027040",height:"70px"}}>
                     <div style={{width:"30%", height:"100%", display:"flex",alignItems:"center"}}><img style={{width:"50px"}}src={product.imagem}/></div>
+                    <a href={product.link}>
                     <div style={{width:"70%",color:"#027040"}}>
                       <h3 style={{fontSize:"10px"}}>{product.name}</h3>
                       <span style={{fontWeight:"600",fontSize:"20px"}}>{product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-                    </div>
+                    </div></a>
                   </div>
                   </div>))}
                 </div>

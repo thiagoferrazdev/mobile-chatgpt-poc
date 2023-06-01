@@ -9,6 +9,9 @@ class MainDocument extends Document {
     return (
       <Html>
         <Head />
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+        </style>
         <body>
           <Main />
           <NextScript />
