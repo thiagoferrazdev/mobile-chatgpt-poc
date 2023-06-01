@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import Modal from '../components/Modal'
 import ComboBox from '../components/Autocomplete'
+import { makeStyles } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress'
 export default function Home() {
   const [foodInput, setFoodInput] = useState("");
   const [result, setResult] = useState([]);
@@ -12,6 +14,19 @@ export default function Home() {
   const [recipes, setRecipes] = useState([]);
   const [execute,setExecute] = useState(false);
   const [process,setProcess] = useState(false);
+  const [loader,setLoader] = useState(false);
+
+  const useStyles = makeStyles(theme => ({
+    loader: {
+      color: "#027040",
+    },
+    colorPrimary: {
+      backgroundColor: '#027040',
+    },
+  }));
+  
+
+
 
   useEffect(()=>{
     async function fetchData() {
@@ -72,16 +87,49 @@ export default function Home() {
 
   const handleProducts = async (product) => {
 
+    setLoader(true);
+    const p = product.split(".")
+    const prod = p[1].split(" ")
+
+    const arraySemVazios = prod.filter(function (i) {
+      return i;
+    });
+
+    console.log(arraySemVazios);
+    console.log(arraySemVazios.length);
+    console.log(arraySemVazios[arraySemVazios.length -2]);
+    console.log(arraySemVazios[arraySemVazios.length -1]);
+    const wordkey = `Vinho ${arraySemVazios[arraySemVazios.length -2]} ${arraySemVazios[arraySemVazios.length -1]}`;
+    console.log(wordkey.replace(/[^a-zA-Z\s]/g, ""));
+    const wordcallback = `${arraySemVazios[0]} ${arraySemVazios[1]}`;
+    console.log(wordcallback);
+
+
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
       url: `/api/external`,
       params: {
-        product: product.split(" ")[3]
+        product: wordkey.replace(/[^a-zA-Z\s]/g, "")
       },
     };
-    
-    const productsVTEX = await axios.request(config).then((response) => response.data).catch((error) => { console.log(error);});
+
+    let config2 = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `/api/external`,
+      params: {
+        product: 'Vinho tinto'
+      },
+    };
+
+    const productsVTEXC = axios.request(config2).then((response) => response.data).catch((error) => { console.log(error);});
+    const productsVTEXW = axios.request(config).then((response) => response.data).catch((error) => { console.log(error);});
+    const arrVTEX = await Promise.all([productsVTEXC, productsVTEXW]).then((response) => {
+      setLoader(false);
+      return response}).catch((error) => { console.log(error);});
+    console.log(arrVTEX);
+    const productsVTEX = arrVTEX[1].length > 0 ? arrVTEX[1]: arrVTEX[0];
     const productsData = productsVTEX?.map((prod)=>{
       const [item] = prod.items;
       const [imagem] = item.images
@@ -100,6 +148,7 @@ export default function Home() {
     })
     setProducts(productsData);
   };
+  const classes = useStyles();
   return (
     <div>
       <Head>
@@ -159,10 +208,14 @@ export default function Home() {
               
             <Modal
                 open={showModal} 
-                onClose={() => setShowModal(false)}
-                
-            >
+                onClose={() => {
+                  setShowModal(false)
+                  setProducts([]);
+                }}>
                <div style={{width:"100%",paddingBottom: "20px",display:"flex",justifyContent:"center",alignItems:"center",textAlign:"center",fontFamily:"Montserrat"}}><h3 style={{color:"#027040",fontWeight:"600",fontSize:"29px"}}>Encontrei os seguintes produtos disponíveis em nossas lojas</h3></div>
+               {loader && (<div style={{width:"100%",paddingBottom: "20px",display:"flex",justifyContent:"center",alignItems:"center",textAlign:"center",fontFamily:"Montserrat"}} className={classes.loader}>
+                  <CircularProgress sx={{color:"#027040"}} />
+                </div>)}
                 <div style={{display:"flex",flexWrap:"wrap"}}>
                  {products?.map((product,index)=>( 
                   <div style={{flexBasis: "50%"}}>
