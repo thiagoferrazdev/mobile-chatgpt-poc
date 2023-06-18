@@ -7,4 +7,10 @@ module.exports = {
           },
         ]
       },
+      experimental: {
+        images: {
+            unoptimized: true
+        }
+      }, 
+      trailingSlash: true,
   };
